@@ -13,7 +13,7 @@ ini_set('display_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 // === CONFIG ===
-$OPENAI_API_KEY = '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'; // <-- Reemplaza por tu API key real
+$OPENAI_API_KEY = 'asd'; // <-- Reemplaza por tu API key real
 if (!$OPENAI_API_KEY) {
   http_response_code(500);
   echo json_encode(['error' => 'Missing OPENAI_API_KEY']); exit;

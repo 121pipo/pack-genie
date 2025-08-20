@@ -1,268 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pack Genie</title>
-  <style>
-    :root {
-      --bg: #f7f9fc;
-      --card: #ffffff;
-      --muted: #6b7280;
-      --text: #111827;
-      --brand: #ff8b2b;
-      --line: #e5e7eb;
-      --bubbleUser: #f3f4f6;
-      --bubbleBot: #ff8b2b;
-      --chip: #e5e7eb;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pack Genie</title>
+    <link rel="stylesheet" href="style.css"> <style>
+        /* --- Estilos Generales --- */
+        :root {
+            --brand: #ff8b2b; --text: #111827; --muted: #6b7280;
+            --bg: #f7f9fc; --card: #ffffff; --line: #e5e7eb;
+        }
+        * { box-sizing: border-box; }
+        html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { display: grid; place-items: center; background: var(--bg); }
 
-    * {
-      box-sizing: border-box
-    }
+        .app {
+            width: 100%; max-width: 430px; height: 100vh; max-height: 900px;
+            display: flex; flex-direction: column; position: relative;
+            background: var(--card); border: 1px solid var(--line);
+            border-radius: 20px; overflow: hidden;
+        }
+        .screen {
+            display: flex; flex-direction: column; flex: 1;
+            width: 100%; height: 100%;
+        }
+        .screen.hidden { display: none; }
+        .topbar {
+            padding: 12px; border-bottom: 1px solid var(--line); text-align: center;
+        }
+        .topbar img { height: 60px; }
+        .bottom-actions {
+            padding: 16px; display: flex; flex-direction: column; gap: 10px;
+            border-top: 1px solid var(--line);
+        }
+        .action-btn {
+            padding: 14px; border-radius: 999px; font-size: 16px;
+            font-weight: bold; cursor: pointer; border: 2px solid var(--brand);
+        }
+        .action-btn.primary { background: var(--brand); color: white; }
+        .action-btn:not(.primary) { background: transparent; color: var(--brand); }
+        .chips {
+            padding: 16px; display: flex; flex-wrap: wrap; gap: 10px;
+            justify-content: center;
+        }
+        .chip {
+            background: #f3f4f6; padding: 10px 16px; border-radius: 999px;
+            font-size: 14px; cursor: pointer;
+        }
+        .wave { display: flex; align-items: center; justify-content: center; gap: 6px; height: 30px; }
+        .bar { width: 6px; height: 10px; border-radius: 3px; background: var(--brand); animation: wave 1s ease-in-out infinite; }
+        .bar:nth-child(2){animation-delay:.12s} .bar:nth-child(3){animation-delay:.24s} .bar:nth-child(4){animation-delay:.36s} .bar:nth-child(5){animation-delay:.48s}
+        @keyframes wave{ 0%,100%{transform:scaleY(.6)} 50%{transform:scaleY(1.6)} }
 
-    html,
-    body {
-      height: 100%
-    }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .app {
-      width: 100%;
-      max-width: 430px;
-      height: 100vh;
-      max-height: 900px;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      overflow: hidden;
-      background: var(--card);
-      position: relative;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .topbar img {
-      height: 60px;
-    }
-
-    .status {
-      position: absolute;
-      right: 12px;
-      top: 12px;
-      font-size: 11px;
-      color: #888
-    }
-
-    .messages-wrap.hidden {
-      display: none;
-    }
-
-    .messages {
-      flex: 1;
-      overflow: auto;
-      padding: 16px 14px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .bubble {
-      max-width: 78%;
-      padding: 12px 14px;
-      border-radius: 16px;
-      font-size: 15px;
-      position: relative;
-      line-height: 1.4;
-    }
-
-    .bubble.user {
-      align-self: flex-end;
-      background: var(--bubbleUser);
-      color: var(--text);
-    }
-
-    .bubble.bot {
-      align-self: flex-start;
-      background: var(--bubbleBot);
-      color: white;
-    }
-
-    .chips {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding: 4px 12px 10px;
-    }
-
-    .chip {
-      background: var(--chip);
-      padding: 8px 10px;
-      border-radius: 999px;
-      font-size: 13px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .toolbar {
-      border-top: 1px solid var(--line);
-      padding: 12px;
-      background: var(--card);
-      display: flex;
-      justify-content: center;
-    }
-
-    .micBtn {
-      height: 64px;
-      border-radius: 50%;
-      border: none;
-      background: white;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-    }
-
-    .micBtn img {
-      height: 70px;
-      width: 70px;
-    }
-
-    /* Overlay */
-    .overlay {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      display: none;
-      background: linear-gradient(to bottom, rgba(255, 255, 255, .92), rgba(255, 255, 255, .75) 60%, transparent 100%);
-      backdrop-filter: blur(2px);
-    }
-
-    .overlay.show {
-      display: block;
-    }
-
-    .ov-wrap {
-      height: 56%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding-top: 28px;
-    }
-
-    .wave {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin: 6px 0 12px;
-    }
-
-    .bar {
-      width: 6px;
-      height: 10px;
-      border-radius: 3px;
-      background: var(--brand);
-      opacity: .9;
-      animation: wave 1s ease-in-out infinite;
-    }
-
-    .bar:nth-child(2) {
-      animation-delay: .12s
-    }
-
-    .bar:nth-child(3) {
-      animation-delay: .24s
-    }
-
-    .bar:nth-child(4) {
-      animation-delay: .36s
-    }
-
-    .bar:nth-child(5) {
-      animation-delay: .48s
-    }
-
-    @keyframes wave {
-
-      0%,
-      100% {
-        transform: scaleY(.6)
-      }
-
-      50% {
-        transform: scaleY(1.6)
-      }
-    }
-
-    .ov-text {
-      width: 82%;
-      text-align: center;
-      color: #1f2937;
-      font-size: 18px;
-      line-height: 1.3;
-      font-weight: 700;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, .6);
-    }
-
-    .ov-sub {
-      width: 82%;
-      text-align: center;
-      color: #6b7280;
-      font-size: 13px;
-      margin-top: 6px;
-      font-weight: 500;
-    }
-  </style>
+        /* --- Estilos Específicos por Pantalla --- */
+        .intro-content, .closing-content { flex: 1; text-align: center; padding: 20px; }
+        .product-image { max-width: 350px; margin-bottom: 20px; }
+        .prompt-area { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 20px; }
+        #promptText { font-size: 24px; color: var(--text); margin: 10px 0; }
+        #promptSubText { font-size: 16px; color: var(--muted); }
+        .mic-area { padding: 20px; }
+        .micBtn {  border-radius: 50%; border: none; background: white; cursor: pointer; }
+        .micBtn img { height: 100%; width: 100%; }
+        .chat-header { display: flex; align-items: center; justify-content: space-between; }
+        .back-btn { background: none; border: none; font-size: 24px; cursor: pointer; width: 50px; }
+        .messages { flex: 1; overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .bubble { max-width: 78%; padding: 12px 16px; border-radius: 18px; line-height: 1.4; }
+        .bubble.user { align-self: flex-end; background: #f3f4f6; color: var(--text); }
+        .bubble.bot { align-self: flex-start; background: var(--brand); color: white; }
+    </style>
 </head>
-
 <body>
   <div class="app">
-    <div class="topbar"><img src="logo.png" alt="Pack Genie" /></div>
-    <div class="status" id="status">Ready</div>
-    <div class="messages-wrap" id="messagesWrap">
-      <div id="messages" class="messages"></div>
-    </div>
-    <div class="chips">
-      <div class="chip" data-q="Give me a pumpkin pie recipe">🎃 Pumpkin Pie Recipe</div>
-      <div class="chip" data-q="Is pumpkin spicy?">🌶️ Spiciness</div>
-      <div class="chip" data-q="How many servings per can?">🥄 Servings</div>
-      <div class="chip" data-q="How to store it?">🧊 Storage</div>
-    </div>
-    <div class="toolbar"> <button class="micBtn" id="mic"><img src="mic.png" alt="Mic" /></button> </div>
-    <div class="overlay" id="overlay">
-      <div class="ov-wrap">
-        <div class="wave" id="ovWave">
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-        </div>
-        <div class="ov-text" id="ovText">I’m ready, ask me anything!</div>
-        <div class="ov-sub" id="ovSub">Listening…</div>
+    <div id="introScreen" class="screen">
+      <div class="topbar"><img src="logo.png" alt="Pack Genie" /></div>
+      <div class="intro-content">
+        <img src="libby.png" alt="Libby's Pumpkin Can" class="product-image">
+        <h2>Ask me anything about <br>Libby's Pumpkin 🎃</h2>
+        <p>You can ask about recipes, cooking tips, fun facts, and more.</p>
+      </div>
+      <div class="bottom-actions">
+        <button id="talkToGenieBtn" class="action-btn primary">Talk to Genie</button>
+        <button id="doneBtnIntro" class="action-btn">Done</button>
       </div>
     </div>
-  </div>
-  <script src="app.js">
-  
-  </script>
-</body>
 
+    <div id="homeScreen" class="screen hidden">
+      <div class="topbar"><img src="logo.png" alt="Pack Genie" /></div>
+      <div class="prompt-area">
+        <div class="wave" id="wave">
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+        <h2 id="promptText">I'm ready, ask me anything.</h2>
+        <p id="promptSubText"></p>
+      </div>
+      <div class="mic-area" style="text-align:center;">
+        <button class="micBtn" id="mic"><img src="mic.png" alt="Mic" /></button>
+      </div>
+      <div class="chips">
+        <div class="chip" data-q="Give me a quick pumpkin dish idea">🎃 Give me a quick pumpkin dish idea</div>
+        <div class="chip" data-q="Fun fact about pumpkin"> Fun fact about pumpkin</div>
+      </div>
+      <div class="bottom-actions">
+        <button id="seeConversationBtn" class="action-btn primary">See Conversation</button>
+        <button id="endConversationBtn" class="action-btn">End Conversation</button>
+      </div>
+    </div>
+
+    <div id="chatScreen" class="screen hidden">
+      <div class="topbar chat-header">
+        <button id="backToHomeBtn" class="back-btn">←</button>
+        <h3>Your Chat with genie</h3>
+        <span></span> </div>
+      <div id="messages" class="messages"></div>
+      <div class="bottom-actions">
+        <button id="downloadBtn" class="action-btn">Download Conversation</button>
+      </div>
+    </div>
+    
+    <div id="closingScreen" class="screen hidden">
+        <div class="topbar"><img src="logo.png" alt="Pack Genie" /></div>
+        <div class="closing-content">
+            <h2>Thanks for chatting with Genie!</h2>
+            <p>Here are more things you can ask me about:</p>
+        </div>
+        <div class="chips closing-chips">
+            <div class="chip" data-q="Nutritional facts">Nutritional facts</div>
+            <div class="chip" data-q="Pumpkin storage">Pumpkin storage</div>
+        </div>
+        <div class="bottom-actions">
+            <button id="askAnotherQuestionBtn" class="action-btn primary">Ask another question</button>
+            <button id="downloadBtnClosing" class="action-btn">Download Conversation</button>
+        </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
 </html>
