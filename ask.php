@@ -1,8 +1,7 @@
-<?php
 // ask.php — PHP 7.4+
 // Responde siempre JSON { text: "...", [waiting:true, topic:"...", step:N] }
 
-declare(strict_types=1);
+/*declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
@@ -13,7 +12,7 @@ ini_set('display_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED);
 
 // === CONFIG ===
-$OPENAI_API_KEY = 'asd'; // <-- Reemplaza por tu API key real
+$OPENAI_API_KEY = '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'; // <-- Reemplaza por tu API key real
 if (!$OPENAI_API_KEY) {
   http_response_code(500);
   echo json_encode(['error' => 'Missing OPENAI_API_KEY']); exit;
@@ -160,4 +159,4 @@ if (preg_match('/(are you ready|ready to begin|shall we continue|say yes|when yo
 }
 
 echo json_encode($response, JSON_UNESCAPED_UNICODE); exit;
-
+*/
